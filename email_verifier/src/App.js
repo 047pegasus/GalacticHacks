@@ -1,12 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
-
+import Typography from '@mui/material/Typography';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        
-      </header>
+      <Typography variant="h2">
+        XERO MAIL
+    </Typography>
+    <Typography variant="subtitle1">
+    A free e-mail checking tool to check your address domains and verify its presence.
+    </Typography>  
+    
     </div>
   );
 }
