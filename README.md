@@ -68,6 +68,7 @@ Technologies used in the project:
 *   GoLang (Base Development Language)
 *   Cobra Library(Go) (CLI Generation Utility)
 *   Viper Wrapper(for Cobra)
+*   Color Package(for Pretty CLI)
 
 <h2>🛡️ License:</h2>
 
