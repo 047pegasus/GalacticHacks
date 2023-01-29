@@ -2,94 +2,118 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
-	"regexp"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-func isValidEmail(email string) bool {
-	// Regular expression pattern for a valid email address
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	return re.MatchString(email)
-}
-
-var email string
-
-var cmdVerifyEmail = &cobra.Command{
-	Use:   "verify-email",
-	Short: "Verify the validity of an email address",
-	Long:  "A simple utility to check if a given email address is valid",
-	Run: func(cmd *cobra.Command, args []string) {
-		if isValidEmail(email) {
-			fmt.Println("\u2705 " + email + " is valid")
-		} else {
-			fmt.Println("\u274C " + email + " is not valid")
-		}
-	},
-}
-
 func main() {
+	var email string
+	var checkFormat, checkHost, checkMX, checkSPF, checkDMARC bool
 
-	cmdVerifyEmail.Flags().StringVarP(&email, "email", "e", "", "Email address to verify")
-	cmdVerifyEmail.MarkFlagRequired("email")
+	rootCmd := &cobra.Command{
+		Use:   "email-verify",
+		Short: "A command line utility to verify and validate email addresses developed using Go with Cobra and Viper.",
+		Run: func(cmd *cobra.Command, args []string) {
+			if checkFormat && !isValidFormat(email) {
+				color.Red("Invalid email format ❌")
+				return
+			}
+			if checkHost && !isValidHost(email) {
+				color.Red("Invalid host ❌")
+				return
+			}
 
-	if err := cmdVerifyEmail.Execute(); err != nil {
+			if checkMX && !isValidMX(email) {
+				color.Red("Invalid MX record ❌")
+				return
+			}
+
+			if checkDMARC && !isValidDMARC(email) {
+				color.Red("Invalid DMARC record ❌")
+				return
+			}
+
+			if checkSPF && !isValidSPF(email) {
+				color.Red("Invalid SPF record ❌")
+				return
+			}
+
+			color.Green("Valid email address ✅")
+		},
+	}
+
+	rootCmd.Flags().StringVarP(&email, "email", "e", "", "Email address to verify")
+	rootCmd.MarkFlagRequired("email")
+	viper.BindPFlag("email", rootCmd.Flags().Lookup("email"))
+
+	rootCmd.Flags().BoolVar(&checkFormat, "format", true, "Check email format")
+	rootCmd.Flags().BoolVar(&checkHost, "host", true, "Check host validity")
+	rootCmd.Flags().BoolVar(&checkMX, "mx", true, "Check MX record")
+	rootCmd.Flags().BoolVar(&checkDMARC, "dmarc", true, "Check DMARC record")
+	rootCmd.Flags().BoolVar(&checkSPF, "spf", true, "Check SPF record")
+
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 	}
-
-	scanner := email
-
-	fmt.Printf("Domain, hasMX, hasSPF, SPF Record, hasDMARC, DMARC Record \n")
-
-	checkdomain(scanner)
-
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("Error!! could not resolve from input: %v \n", err)
-	}
 }
 
-func checkdomain(domain string) {
-	var hasMX, hasSPF, hasDMARC bool
-	var spfRecord, dmarcRecord string
-
-	mxRecords, err := net.LookupMX(domain)
-
-	if err != nil {
-		log.Printf("Error encountered %v \n", err)
+func isValidFormat(email string) bool {
+	at := strings.LastIndex(email, "@")
+	if at <= 0 {
+		return false
 	}
-	if len(mxRecords) > 0 {
-		hasMX = true
+	if at == len(email)-1 {
+		return false
 	}
+	color.Green("Email provided is in valid format ✅")
+	return true
+}
 
-	txtRecords, err := net.LookupTXT(domain)
-
-	if err != nil {
-		log.Printf("Error Encountered:%v \n", err)
+func isValidHost(email string) bool {
+	_, host := split(email)
+	hst, err := net.LookupHost(host)
+	if err != nil || len(hst) == 0 {
+		return false
 	}
+	color.Green("Email host is valid ✅")
+	return true
+}
 
-	for _, record := range txtRecords {
-		if strings.HasPrefix(record, "v=spf1") {
-			hasSPF = true
-			spfRecord = record
-			break
-		}
+func isValidMX(email string) bool {
+	_, host := split(email)
+	mxs, err := net.LookupMX(host)
+	if err != nil || len(mxs) == 0 {
+		return false
 	}
+	color.Green("Email MX Records are valid ✅")
+	return true
+}
 
-	dmarcRecords, err := net.LookupTXT("_dmarc." + domain)
-	if err != nil {
-		log.Printf("Error %v \n", err)
+func isValidDMARC(email string) bool {
+	_, host := split(email)
+	addrs, err := net.LookupTXT(fmt.Sprintf("%s.%s", "_dmarc", host))
+	if err != nil || len(addrs) == 0 {
+		return false
 	}
+	color.Green("Email provided has valid DMARC Records found ✅")
+	return true
+}
 
-	for _, record := range dmarcRecords {
-		if strings.HasPrefix(record, "v=DMARC1") {
-			hasDMARC = true
-			dmarcRecord = record
-			break
-		}
+func isValidSPF(email string) bool {
+	_, host := split(email)
+	addrs, err := net.LookupTXT(fmt.Sprintf("%s.%s", "_spf", host))
+	if err != nil || len(addrs) == 0 {
+		return false
 	}
+	color.Green("Email provided has valid SPFv ✅")
+	return true
+}
 
-	fmt.Printf("%v, %v, %v, %v, %v, %v \n", domain, hasMX, hasSPF, spfRecord, hasDMARC, dmarcRecord)
+func split(email string) (string, string) {
+	at := strings.LastIndex(email, "@")
+	return email[:at], email[at+1:]
 }
