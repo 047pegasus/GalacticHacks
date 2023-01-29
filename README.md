@@ -16,10 +16,10 @@ It offers developers an easy way to create applications with a lot of functional
 <br>
 <div align="center">
 <h2 align="left"> 1. Landing Page</h2><br>
-<img  src="https://raw.githubusercontent.com/047pegasus/GalacticHacks/7cad891b3cafa46e2d6ee06e9013e420856e3405/Landing%20page.png" alt="project-screenshot" width="500" height="200/">
+<img  src="https://raw.githubusercontent.com/047pegasus/GalacticHacks/7cad891b3cafa46e2d6ee06e9013e420856e3405/Landing%20page.png" alt="project-screenshot" width="650" height="350/">
 <br><br>
 <h2 align="left"> 2. Result Page</h2><br>
-<img src="https://raw.githubusercontent.com/047pegasus/GalacticHacks/master/Result%20Page.png" alt="project-screenshot" width="500" height="200/">
+<img src="https://raw.githubusercontent.com/047pegasus/GalacticHacks/master/Result%20Page.png" alt="project-screenshot" width="650" height="350/">
 </div>
 
 <br/>
