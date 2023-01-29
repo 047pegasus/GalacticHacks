@@ -1,21 +1,50 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
-	"os"
+	"regexp"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
+func isValidEmail(email string) bool {
+	// Regular expression pattern for a valid email address
+	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	return re.MatchString(email)
+}
+
+var email string
+
+var cmdVerifyEmail = &cobra.Command{
+	Use:   "verify-email",
+	Short: "Verify the validity of an email address",
+	Long:  "A simple utility to check if a given email address is valid",
+	Run: func(cmd *cobra.Command, args []string) {
+		if isValidEmail(email) {
+			fmt.Println("\u2705 " + email + " is valid")
+		} else {
+			fmt.Println("\u274C " + email + " is not valid")
+		}
+	},
+}
+
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
+
+	cmdVerifyEmail.Flags().StringVarP(&email, "email", "e", "", "Email address to verify")
+	cmdVerifyEmail.MarkFlagRequired("email")
+
+	if err := cmdVerifyEmail.Execute(); err != nil {
+		fmt.Println(err)
+	}
+
+	scanner := email
+
 	fmt.Printf("Domain, hasMX, hasSPF, SPF Record, hasDMARC, DMARC Record \n")
 
-	for scanner.Scan() {
-		checkdomain(scanner.Text())
-	}
+	checkdomain(scanner)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("Error!! could not resolve from input: %v \n", err)
