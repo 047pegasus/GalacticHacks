@@ -58,7 +58,7 @@ go build main.go
 <br>
 
 <h2> 🧑‍🤝‍🧑Contribution Guidelines:</h2>
-To contribute to this project, abide by the rules as per syntactical definitions of Go Programming and by the React ES6 Syntax.  To contribute apply with a valid Pull/Merge (PR) Request and it will be accepted once all the params pass the tests of the team guidelines.
+To contribute to this project, abide by the rules as per syntactical definitions of Go Programming Syntax with feature addition visible or bug fix to be mentioned in the request. To contribute apply with a valid Pull/Merge (PR) Request and it will be accepted once all the params pass the tests of the team guidelines.
 <br><br>
   
 <h2>💻 Tech Stack Used:</h2>
