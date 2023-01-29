@@ -19,26 +19,30 @@ func main() {
 		Short: "A command line utility to verify and validate email addresses developed using Go with Cobra and Viper.",
 		Run: func(cmd *cobra.Command, args []string) {
 			if checkFormat && !isValidFormat(email) {
-				color.Red("Invalid email format ❌")
+				color.Red("❗ Invalid email format ❌")
 				return
 			}
 			if checkHost && !isValidHost(email) {
-				color.Red("Invalid host ❌")
+				color.Red("❗ Invalid host ❌")
+				color.Yellow("Try using an email address using a proper host 🔰")
 				return
 			}
 
 			if checkMX && !isValidMX(email) {
-				color.Red("Invalid MX record ❌")
+				color.Red("❗ Invalid MX record ❌")
+				color.Yellow("Try using an email address using a proper host 🔰")
 				return
 			}
 
 			if checkDMARC && !isValidDMARC(email) {
-				color.Red("Invalid DMARC record ❌")
+				color.Red("❗ Invalid DMARC record ❌")
+				color.Yellow("Try using an email address using a proper host 🔰")
 				return
 			}
 
 			if checkSPF && !isValidSPF(email) {
-				color.Red("Invalid SPF record ❌")
+				color.Red("❗ Invalid SPF record ❌")
+				color.Yellow("Try using an email address using a proper host 🔰")
 				return
 			}
 
