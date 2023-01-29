@@ -1,5 +1,9 @@
-<h1 align="center" id="title">XEROMAIL</h1>
+<h1 align="center" id="title"><b>XEROMAIL</b></h1>
 <br>
+
+<div align="center">
+<img src="https://socialify.git.ci/047pegasus/GalacticHacks/image?font=Jost&language=1&name=1&owner=1&pattern=Signal&stargazers=1&theme=Dark" alt="GalacticHacks" width="640" height="320" />
+</div>
 
 <p id="description">This is the official repository for the Galactic Hacks Hackathon 2k23 JUET. This project is bootstrapped using Create React App command and Go language and it is a dynamic React based Web application that validates the email and ensures it's existence.<br><br>
 Our project is about ensuring the validation of email provided by the user. If the mail domain service provider is accurate then the tool fetches all the details of the email domain. Even if the email provided by the user is invalid, then also our tool is able to provide the details of the provided email domain.<br> 
